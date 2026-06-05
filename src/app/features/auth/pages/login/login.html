@@ -1,14 +1,19 @@
-<h1>Login Page</h1>
-<input 
-    type="email" 
-    placeholder="Email"
-    [(ngModel)]="email"
->
+<div class="login-container">
+  <h2>ĐĂNG NHẬP HỆ THỐNG</h2>
 
-<input 
-    type="password" 
-    placeholder="Password"
-    [(ngModel)]="password"    
->
+  <div *ngIf="errorMessage" class="alert-error">
+    {{ errorMessage }}
+  </div>
 
-<button (click)="onLogin()">Login</button>
+  <div class="form-group">
+    <label>Email:</label>
+    <input type="email" [(ngModel)]="loginData.email" placeholder="Nhập email của bạn...">
+  </div>
+
+  <div class="form-group">
+    <label>Mật khẩu:</label>
+    <input type="password" [(ngModel)]="loginData.password" placeholder="Nhập mật khẩu...">
+  </div>
+
+  <button (click)="onLogin()">Đăng nhập</button>
+</div>
