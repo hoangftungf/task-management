@@ -1,9 +1,13 @@
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskManagementApi.Data;
 using TaskManagementApi.Dtos;
 using TaskManagementApi.Entities;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TaskManagementApi.Controllers;
 
@@ -22,22 +26,45 @@ public class AuthController : ControllerBase //kế thừa ControllerBase
 
     //Api login
     [HttpPost("login")] //http route metadata POST /api/auth/login --> request routing
-    public IActionResult Login([FromBody] LoginRequest request) //IActionResult: trả về 200 OK, 400 Bad Request...
+    public async Task<IActionResult> Login([FromBody] LoginRequest request) //IActionResult: trả về 200 OK, 400 Bad Request...
     {
-        Console.WriteLine(request.Email);
-        Console.WriteLine(request.Password);
+        // Tìm user trong DB
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        if (user == null) return Unauthorized("Email không tồn tại");
 
-        return Ok(new //Ok() từ ControllerBase
+        // Đối chiếu mật khẩu (Bcrypt băm mật khẩu nhập vào và so sánh với mật khẩu băm trong db)
+        bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
+        if (!isPasswordValid) return Unauthorized("Sai mật khẩu");
+
+        // Nếu đúng, tạo Jwt Token
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes("MaiHoangTung_Secret_Key_2026_Project_TaskManagement_SuperSecure");
+
+        var tokenDesciptor = new SecurityTokenDescriptor
         {
-            token = "fake-jwt-token",
-            email = request.Email
-        });
+            Subject = new ClaimsIdentity(new[] 
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
+                new Claim(ClaimTypes.Email, user.Email) 
+            }),
+            Expires = DateTime.UtcNow.AddDays(7),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        var token = tokenHandler.CreateToken(tokenDesciptor);
+        var tokenString = tokenHandler.WriteToken(token);
+
+        return Ok(new { token = tokenString, email = user.Email });
     }
 
     //Api register
     [HttpPost("register")] // HTTP route metadata: POST /api/auth/register
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
+        // THÊM ĐOẠN NÀY ĐỂ DEBUG
+        var connString = _context.Database.GetConnectionString();
+        Console.WriteLine(">>> DEBUG CONNECTION STRING: " + connString);
+
         // 1. Kiểm tra xem Email này đã có ai đăng ký trong Database chưa
         // Dịch sang SQL ngầm: SELECT EXISTS(SELECT 1 FROM "Users" WHERE "Email" = dto.Email)
         var userExists = await _context.Users.AnyAsync(u => u.Email == dto.Email);
@@ -66,12 +93,17 @@ public class AuthController : ControllerBase //kế thừa ControllerBase
 
         return Ok("Đăng ký tài khoản thành công!"); // Trả về HTTP 200
     }
-}
 
+    [HttpGet("me")]
+    [Authorize]
+    public IActionResult GetMyProfile()
+    {
+        var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
 
-
-public class LoginRequest //đây là DTO/Data Model, đại diện request data structure giống interface
-{
-    public string Email { get; set; } = ""; //get, set = cho phép đọc, ghi --> tính đóng gói (encapsulation)
-    public string Password { get; set; } = "";
+        return Ok( new
+        {
+            message = "Chúc mừng Tùng đã truy cập thành công vào khu vực bảo mật!",
+            userEmail = email
+        });
+    }
 }

@@ -9,9 +9,11 @@ namespace TaskManagementApi.Data
         // Constructor này dùng để nhận các cấu hình (như Connection String) từ bên ngoài truyền vào
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
+            
         }
 
         // Khai báo bảng dữ liệu: DbSet<User> đại diện cho bảng sẽ tên là "Users" trong Database
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> Users { get; set; } //Khai bao bang Users
+        public DbSet<TaskItem> TaskItems { get; set; } //Khai bao bang TaskItem
     }
 }
