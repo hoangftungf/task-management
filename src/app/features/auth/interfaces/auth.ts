@@ -7,3 +7,9 @@ export interface LoginResponse {
   token: string;
   email: string;
 }
+
+export interface RegisterDto {
+  email: string;
+  password: string;
+  fullName: string;
+}

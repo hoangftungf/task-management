@@ -1,11 +1,11 @@
 services:
   db:
     image: postgres:16
-    container_name: task-mgmt-postgres
+    container_name: task-mgmt-postgres-2
     restart: always
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: supersecret
-      POSTGRES_DB: task_management_db
+      POSTGRES_DB: task_management_db_2
     ports:
-      - "5432:5432"
+      - "5433:5432"

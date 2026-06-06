@@ -1,1 +1,25 @@
-<p>register works!</p>
+<div class="register-container">
+  <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
+
+  <div class="form-group">
+    <label>Họ và Tên:</label>
+    <input type="text" [(ngModel)]="registerData.fullName" placeholder="Nhập họ và tên của bạn...">
+  </div>
+
+  <div class="form-group">
+    <label>Email:</label>
+    <input type="email" [(ngModel)]="registerData.email" placeholder="Nhập địa chỉ email...">
+  </div>
+
+  <div class="form-group">
+    <label>Mật khẩu:</label>
+    <input type="password" [(ngModel)]="registerData.password" placeholder="Tạo mật khẩu bảo mật...">
+  </div>
+
+  <button (click)="onRegister()">Đăng ký</button>
+
+  <div class="redirect-link">
+    <span>Đã có tài khoản? </span>
+    <a routerLink="/login">Đăng nhập ngay</a>
+  </div>
+</div>

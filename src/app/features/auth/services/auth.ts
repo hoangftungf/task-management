@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environment';
-import { LoginRequest, LoginResponse } from '../interfaces/auth';
+import { LoginRequest, LoginResponse, RegisterDto } from '../interfaces/auth';
 
 @Injectable({ //@Injecteble: Class này có thể được Angular DI container quản lý
   providedIn: 'root', //Tạo singleton toàn app
@@ -25,6 +25,10 @@ export class AuthService {
           localStorage.setItem('email', response.email);
         })
       );
+  }
+
+  register(dto: RegisterDto): Observable<string> {
+    return this.http.post(`${this.authApiUrl}/register`, dto, { responseType: 'text'});
   }
 
   // Hàm bổ trợ lấy Token ra để dùng cho các bài sau (lấy danh sách Task)

@@ -1,53 +1,53 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth'; // ──> Import đúng AuthService chung thư mục tính năng
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth';
 import { LoginRequest } from '../../interfaces/auth';
+import { ToastService } from '../../../../core/services/toast';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule], // ──> Nhớ giữ FormsModule để HTML dùng được [(ngModel)]
+  imports: [FormsModule, CommonModule, RouterModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
-
-  loginData: LoginRequest = {
-    email: '',
-    password: ''
-  }
-
-  errorMessage = ''; // Biến để hứng lỗi hiển thị ra màn hình
+  
+  loginData: LoginRequest = { email: '', password: '' };
 
   constructor(
     private authService: AuthService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private toastService: ToastService // Bơm Loa trung tâm vào
+  ) {}
 
   onLogin() {
-    this.errorMessage = ''; // reset thông báo lỗi mỗi lần bấm lại
-
     if (!this.loginData.email || !this.loginData.password) {
-      this.errorMessage = 'Vui lòng nhập đầy đủ tài khoản và mật khẩu.';
+      this.toastService.showError('Vui lòng nhập email và mật khẩu!');
       return;
     }
 
     this.authService.login(this.loginData).subscribe({
-      next: (response) => {
-        console.log('Đăng nhập thành công!', response);
-        // Sau khi có Token, chuyển hướng user sang trang danh sách tasks
-        this.router.navigate(['/tasks']);
+      next: (response: any) => {
+        // 1. Cất Token
+        localStorage.setItem('token', response.token); 
+
+        console.log('token: ', response.token, 'email: ', response.email)
+        
+        // 2. Phát loa thông báo đăng nhập thành công
+        this.toastService.showSuccess('Đăng nhập thành công!');
+
+        // 3. Bay thẳng vào trang hệ thống
+        this.router.navigate(['/tasks']); 
       },
       error: (err) => {
-        // Hứng thông báo lỗi "Email không tồn tại" hoặc "Sai mật khẩu" từ .NET gửi qua
         if (err.status === 401 || err.status === 400) {
-          this.errorMessage = err.error || 'Thông tin đăng nhập không chính xác.';
+          this.toastService.showError(err.error || 'Sai tài khoản hoặc mật khẩu!');
         } else {
-          this.errorMessage = 'Không thể kết nối đến máy chủ Backend.';
+          this.toastService.showError('Lỗi kết nối đến máy chủ!');
         }
-        console.error(err);
       }
     });
   }

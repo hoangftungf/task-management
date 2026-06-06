@@ -1,10 +1,6 @@
 <div class="login-container">
   <h2>ĐĂNG NHẬP HỆ THỐNG</h2>
 
-  <div *ngIf="errorMessage" class="alert-error">
-    {{ errorMessage }}
-  </div>
-
   <div class="form-group">
     <label>Email:</label>
     <input type="email" [(ngModel)]="loginData.email" placeholder="Nhập email của bạn...">
@@ -16,4 +12,9 @@
   </div>
 
   <button (click)="onLogin()">Đăng nhập</button>
+
+  <div class="redirect-link">
+    <span>Chưa có tài khoản? </span>
+    <a routerLink="/register">Đăng ký tài khoản mới</a>
+  </div>
 </div>
