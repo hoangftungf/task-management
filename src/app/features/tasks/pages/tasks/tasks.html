@@ -1,1 +1,31 @@
-<p>tasks works!</p>
+<div class="tasks-container">
+  <div class="header">
+    <h2>Quản Lý Công Việc</h2>
+    <button class="btn-logout" (click)="onLogout()">Đăng xuất</button>
+  </div>
+
+  <div class="add-task-section">
+    <input 
+      type="text" 
+      [(ngModel)]="newTaskTitle" 
+      placeholder="Nhập công việc mới..."
+      class="task-input"
+    >
+    <button class="btn-add">Thêm</button>
+  </div>
+
+  <ul class="task-list">
+    <!-- Sử dụng vòng lặp @for của Angular 17 -->
+    @for (task of taskList; track task.id) {
+      <li class="task-item" [class.completed]="task.isCompleted">
+        <label class="task-label">
+          <input type="checkbox" [checked]="task.isCompleted">
+          <span class="task-title">{{ task.title }}</span>
+        </label>
+        <button class="btn-delete">Xóa</button>
+      </li>
+    } @empty {
+      <p class="empty-msg">Chưa có công việc nào. Hãy thêm mới!</p>
+    }
+  </ul>
+</div>
