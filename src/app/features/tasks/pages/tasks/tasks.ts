@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TaskItem } from '../../interfaces/task';
+import { CreateTaskRequest, TaskItem, UpdateTaskRequest } from '../../interfaces/task';
 import { TaskService } from '../../services/task';
 import { ToastService } from '../../../../core/services/toast';
 import { Title } from '@angular/platform-browser';
@@ -51,7 +51,7 @@ export class TasksComponent implements OnInit {
       return;
     }
 
-    const newDto = {
+    const newDto: CreateTaskRequest = {
       title: this.newTaskTitle,
       description: this.newTaskDescription
     };
@@ -73,10 +73,10 @@ export class TasksComponent implements OnInit {
 
   //Hàm tick chọn hoàn thành / chưa hoàn thành
   onToggleComplete(task: TaskItem) {
-    const updateDto = {
+    const updateDto: UpdateTaskRequest = {
       title: task.title,
       description: task.description,
-      isCompleted: !task.isCompleted //Đảo ngược trạng thái
+      isCompleted: !task.isCompleted
     };
 
     this.taskService.updateTask(task.id, updateDto).subscribe({
