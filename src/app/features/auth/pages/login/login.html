@@ -1,20 +1,41 @@
-<div class="login-container">
-  <h2>ĐĂNG NHẬP HỆ THỐNG</h2>
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Đăng Nhập Hệ Thống</h2>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" formControlName="email" class="form-control">
+        <div *ngIf="f['email'].touched && f['email'].errors" class="error-msg">
+          <small *ngIf="f['email'].errors['required']">Email không được để trống.</small>
+          <small *ngIf="f['email'].errors['email']">Vui lòng nhập đúng định dạng Email.</small>
+        </div>
+      </div>
 
-  <div class="form-group">
-    <label>Email:</label>
-    <input type="email" [(ngModel)]="loginData.email" placeholder="Nhập email của bạn...">
-  </div>
+      <div class="form-group">
+        <label>Mật khẩu</label>
+        <input type="password" formControlName="password" class="form-control">
+        <div *ngIf="f['password'].touched && f['password'].errors" class="error-msg">
+          <small *ngIf="f['password'].errors['required']">Mật khẩu không được để trống.</small>
+        </div>
+      </div>
 
-  <div class="form-group">
-    <label>Mật khẩu:</label>
-    <input type="password" [(ngModel)]="loginData.password" placeholder="Nhập mật khẩu...">
-  </div>
+      <button type="submit" [disabled]="loginForm.invalid" class="btn-submit">
+        Đăng nhập
+      </button>
 
-  <button (click)="onLogin()">Đăng nhập</button>
+      <div class="social-divider">
+        <span>Hoặc đăng nhập bằng</span>
+      </div>
 
-  <div class="redirect-link">
-    <span>Chưa có tài khoản? </span>
-    <a routerLink="/register">Đăng ký tài khoản mới</a>
+      <div class="google-btn-container">
+        <asl-google-signin-button type="standard" size="large" [width]="370"></asl-google-signin-button>
+      </div>
+
+      <p class="auth-redirect">
+        Chưa có tài khoản? <a routerLink="/register">Đăng ký ngay</a>
+      </p>
+    </form>
   </div>
 </div>

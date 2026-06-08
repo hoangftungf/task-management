@@ -6,6 +6,7 @@ import { CreateTaskRequest, TaskItem, UpdateTaskRequest } from '../../interfaces
 import { TaskService } from '../../services/task';
 import { ToastService } from '../../../../core/services/toast';
 import { Title } from '@angular/platform-browser';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-tasks',
@@ -24,7 +25,8 @@ export class TasksComponent implements OnInit {
     private taskService: TaskService,
     private toastService: ToastService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private socialAuthService: SocialAuthService
   ) { }
 
   ngOnInit(): void {
@@ -108,8 +110,21 @@ export class TasksComponent implements OnInit {
   }
 
   // Nút đăng xuất tạm thời
-  onLogout() {
+  async onLogout() {
+    // Xóa token hệ thống để khóa quyền truy cập API
     localStorage.removeItem('token');
+
+    try {
+      // Kích hoạt lệnh đăng xuất của Google để dọn sạch bộ nhớ đệm
+      await this.socialAuthService.signOut();
+    } catch (error) {
+      // Nếu người dùng đăng nhập bằng acc thường, lệnh signOut() của Google sẽ throw lỗi
+      // Dùng catch() để nuốt lỗi, không cho làm sập hệ thống
+      console.log("Đăng xuất khỏi tài khoản thường, bỏ qua lệnh của Google")
+    }
+
+    //Thông báo và bẻ lái về trang login
+    this.toastService.showSuccess("Đã đăng xuất thành công!");
     this.router.navigate(['/login']);
   }
 }

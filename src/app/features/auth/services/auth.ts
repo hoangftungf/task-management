@@ -27,6 +27,12 @@ export class AuthService {
       );
   }
 
+  //Gửi idToken xuống BE
+  googleLogin(idToken: string): Observable<any> {
+    // Đóng gói thành object { idToken: "chuỗi_dài_ngoằng" } để khớp với GoogleLoginDto ở Backend
+    return this.http.post(`${this.authApiUrl}/google-login`, { idToken: idToken});
+  }
+
   register(dto: RegisterDto): Observable<string> {
     return this.http.post(`${this.authApiUrl}/register`, dto, { responseType: 'text'});
   }

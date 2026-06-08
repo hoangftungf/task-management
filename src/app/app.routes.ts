@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/pages/login/login';
 import { RegisterComponent } from './features/auth/pages/register/register';
 import { TasksComponent } from './features/tasks/pages/tasks/tasks';
+import { authGuard } from './core/guards/auth-guard';
 
 
 // File này dùng để cấu hình đường dẫn các trang trong dự án
@@ -18,7 +19,8 @@ export const routes: Routes = [
     },
     {
         path: 'tasks',
-        component: TasksComponent
+        component: TasksComponent,
+        canActivate: [authGuard]
     },
     {
         path: '',

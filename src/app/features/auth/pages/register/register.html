@@ -1,25 +1,54 @@
-<div class="register-container">
-  <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Đăng Ký Tài Khoản</h2>
 
-  <div class="form-group">
-    <label>Họ và Tên:</label>
-    <input type="text" [(ngModel)]="registerData.fullName" placeholder="Nhập họ và tên của bạn...">
-  </div>
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
 
-  <div class="form-group">
-    <label>Email:</label>
-    <input type="email" [(ngModel)]="registerData.email" placeholder="Nhập địa chỉ email...">
-  </div>
+      <div class="form-group">
+        <label>Họ và Tên</label>
+        <input type="text" formControlName="fullName" class="form-control">
+        <div *ngIf="f['fullName'].touched && f['fullName'].errors" class="error-msg">
+          <small *ngIf="f['fullName'].errors['required']">Họ và tên không được để trống.</small>
+          <small *ngIf="f['fullName'].errors['minLength']">Họ và tên phải có ít nhất 2 ký tự.</small>
+        </div>
+      </div>
 
-  <div class="form-group">
-    <label>Mật khẩu:</label>
-    <input type="password" [(ngModel)]="registerData.password" placeholder="Tạo mật khẩu bảo mật...">
-  </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" formControlName="email" class="form-control">
+        <div *ngIf="f['email'].touched && f['email'].errors" class="error-msg">
+          <small *ngIf="f['email'].errors['required']">Email không được để trống.</small>
+          <small *ngIf="f['email'].errors['email']">Vui lòng nhập đúng định dạng Email (Ví dụ:
+            abc&#64;gmail.com).</small>
+        </div>
+      </div>
 
-  <button (click)="onRegister()">Đăng ký</button>
+      <div class="form-group">
+        <label>Mật khẩu</label>
+        <input type="password" formControlName="password" class="form-control">
 
-  <div class="redirect-link">
-    <span>Đã có tài khoản? </span>
-    <a routerLink="/login">Đăng nhập ngay</a>
+        <div *ngIf="f['password'].touched && f['password'].errors" class="error-msg">
+          <small *ngIf="f['password'].errors['required']">
+            Mật khẩu không được để trống.
+          </small>
+
+          <small *ngIf="f['password'].errors['minlength']">
+            Mật khẩu phải dài tối thiểu 6 ký tự.
+          </small>
+
+          <small *ngIf="f['password'].errors['pattern']">
+            Mật khẩu quá yếu! Phải bao gồm cả chữ hoa, chữ thường và chữ số.
+          </small>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="registerForm.invalid" class="btn-submit">
+        Đăng ký
+      </button>
+
+      <p class="auth-redirect">
+        Đã có tài khoản? <a routerLink="/login">Đăng nhập ngay</a>
+      </p>
+    </form>
   </div>
 </div>

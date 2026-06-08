@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { RegisterDto } from '../../interfaces/auth';
@@ -10,42 +9,56 @@ import { ToastService } from '../../../../core/services/toast';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule],
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
-export class RegisterComponent {
-  
-  registerData: RegisterDto = { fullName: '', email: '', password: '' };
+export class RegisterComponent implements OnInit {
+  // 3. Khai báo một đối tượng quản lý Form dữ liệu
+  registerForm!: FormGroup;
 
   constructor(
+    private fb: FormBuilder, // Tiêm FormBuilder để dựng form nhanh hơn
     private authService: AuthService,
+    private toastService: ToastService,
     private router: Router,
-    private toastService: ToastService // Bơm Loa trung tâm vào
+    private cdr: ChangeDetectorRef
   ) {}
 
+  ngOnInit() {
+    // 4. Khởi tạo cấu trúc Form và cài đặt các điều kiện rào cản (Validation)
+    this.registerForm = this.fb.group({
+      fullName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]], // Bắt buộc nhập và phải đúng định dạng @
+      password: ['', [
+        Validators.required, 
+        Validators.minLength(6),
+        // Regex bắt buộc: Ít nhất 1 chữ hoa (?=.*[A-Z]), 1 chữ thường (?=.*[a-z]), 1 chữ số (?=.*[0-9])
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/) 
+      ]]
+    });
+  }
+
+  // Hàm helper giúp gọi nhanh các thuộc tính ngoài file HTML để check lỗi
+  get f() { return this.registerForm.controls; }
+
   onRegister() {
-    // Kiểm tra rỗng
-    if (!this.registerData.fullName || !this.registerData.email || !this.registerData.password) {
-      this.toastService.showError('Vui lòng điền đầy đủ thông tin!');
+    // 5. Chặn đứng hành vi bấm nút nếu form chưa hợp lệ
+    if (this.registerForm.invalid) {
+      this.toastService.showError('Vui lòng điền đúng và đầy đủ thông tin!');
       return;
     }
 
-    this.authService.register(this.registerData).subscribe({
-      next: (response) => {
-        // 1. Phát loa thông báo đăng ký thành công
-        this.toastService.showSuccess('Đăng ký thành công! Vui lòng đăng nhập.');
-        
-        // 2. Chuyển thẳng sang trang Login NGAY LẬP TỨC. 
-        // Component Toast ở ngoài sẽ tự lo việc hiển thị 3 giây.
-        this.router.navigate(['/login']); 
+    // Lấy ra gói dữ liệu JSON sạch sẽ sau khi đã qua bộ lọc validation
+    const registerData = this.registerForm.value;
+
+    this.authService.register(registerData).subscribe({
+      next: (res) => {
+        this.toastService.showSuccess('Đăng ký tài khoản thành công!');
+        this.router.navigate(['/login']);
       },
       error: (err) => {
-        if (err.status === 400) {
-          this.toastService.showError(err.error || 'Email này đã được sử dụng!');
-        } else {
-          this.toastService.showError('Lỗi kết nối đến máy chủ!');
-        }
+        this.toastService.showError(err.error?.message || 'Đăng ký thất bại, email có thể đã tồn tại!');
       }
     });
   }

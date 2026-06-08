@@ -8,6 +8,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
+using Google.Apis.Auth;
 
 namespace TaskManagementApi.Controllers;
 
@@ -16,12 +18,13 @@ namespace TaskManagementApi.Controllers;
 public class AuthController : ControllerBase //kế thừa ControllerBase
 {
     private readonly AppDbContext _context; //Khai báo một biến để chứa "Hóa đơn kết nối" Database
-
+    private readonly IConfiguration _configuration;
     // Dependency Injection (DI)
     //.Net DI Container sẽ tự động tạo AppDbContext và ném vào đây mỗi khi có Request tới
-    public AuthController(AppDbContext context)
+    public AuthController(AppDbContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
 
     //Api login
@@ -42,10 +45,10 @@ public class AuthController : ControllerBase //kế thừa ControllerBase
 
         var tokenDesciptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] 
+            Subject = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
-                new Claim(ClaimTypes.Email, user.Email) 
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
             }),
             Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -55,6 +58,53 @@ public class AuthController : ControllerBase //kế thừa ControllerBase
         var tokenString = tokenHandler.WriteToken(token);
 
         return Ok(new { token = tokenString, email = user.Email });
+    }
+
+    //Api Google Login
+    [HttpPost("google-login")]
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto dto)
+    {
+        try
+        {
+            // Báo cáo cấu hình: Lấy ClientId từ appsettings.json (Lưu ý dùng dấu 2 chấm Google:ClientId)
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string> { _configuration["Google:ClientId"] ?? throw new InvalidOperationException("Google:ClientId is missing.") }
+            };
+
+            // Giải mã và xác thực Token với Google
+            var payload = await GoogleJsonWebSignature.ValidateAsync(dto.IdToken, settings);
+
+            var userEmail = payload.Email;
+            var userName = payload.Name;
+
+            // KIỂM TRA & TẠO USER TỰ ĐỘNG
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+
+            // Nếu user chưa có trong DB -> Tự động đăng ký
+            if (user == null)
+            {
+                user = new User
+                {
+                    Email = userEmail,
+                    FullName = userName,
+                    Password = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()) // Băm một chuỗi ngẫu nhiên làm mật khẩu giả
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+            }
+
+            // Sinh Token của hệ thống
+            var tokenString = GenerateJwtToken(user);
+
+            // Trả về cho Frontend y hệt như hàm Login thường
+            return Ok(new { token = tokenString, email = user.Email, message = $"Xin chào {userName}" });
+        }
+        catch (InvalidJwtException)
+        {
+            return BadRequest(new { message = "Token Google không hợp lệ hoặc đã hết hạn" });
+        }
     }
 
     //Api register
@@ -100,10 +150,31 @@ public class AuthController : ControllerBase //kế thừa ControllerBase
     {
         var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
 
-        return Ok( new
+        return Ok(new
         {
             message = "Chúc mừng Tùng đã truy cập thành công vào khu vực bảo mật!",
             userEmail = email
         });
+    }
+
+    //Hàm sinh token dùng chung
+    private string GenerateJwtToken(User user)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes("MaiHoangTung_Secret_Key_2026_Project_TaskManagement_SuperSecure");
+
+        var tokenDesciptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[] 
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
+                new Claim(ClaimTypes.Email, user.Email) 
+            }),
+            Expires = DateTime.UtcNow.AddDays(7),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        var token = tokenHandler.CreateToken(tokenDesciptor);
+        return tokenHandler.WriteToken(token);
     }
 }

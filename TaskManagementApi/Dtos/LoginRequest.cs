@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TaskManagementApi.Dtos
 {
-    public class LoginRequest
+    public class LoginDto
     {
         [Required(ErrorMessage = "Email không được để trống.")]
         [EmailAddress(ErrorMessage = "Định dạng Email không hợp lệ.")]

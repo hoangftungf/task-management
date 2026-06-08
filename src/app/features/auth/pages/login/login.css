@@ -1,85 +1,121 @@
-/* Styling chung cho form (bạn có thể tùy chỉnh thêm) */
-.register-container, .login-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  background-color: #fff;
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Thông báo thành công (Màu xanh) */
-.alert-success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-  padding: 10px 15px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  font-weight: 500;
+.auth-card {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  box-sizing: border-box;
+}
+
+.auth-card h2 {
   text-align: center;
+  margin-bottom: 30px;
+  color: #333;
 }
 
-/* Thông báo lỗi (Màu đỏ) */
-.alert-error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-  padding: 10px 15px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: center;
-}
-
-/* Tùy chỉnh input và button cơ bản */
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
 }
 
-.form-group input {
+.form-control {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box; /* Giúp input không bị tràn viền */
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
-button {
+.form-control:focus {
+  border-color: #0056b3;
+  outline: none;
+}
+
+.error-msg {
+  color: #dc3545;
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.btn-submit {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
+  padding: 14px;
+  background-color: #0056b3;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  margin-top: 10px;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.redirect-link {
   margin-top: 15px;
+}
+
+.btn-submit:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.auth-redirect {
   text-align: center;
+  margin-top: 20px;
   font-size: 14px;
 }
 
-.redirect-link a {
-  color: #007bff;
+.auth-redirect a {
+  color: #0056b3;
   text-decoration: none;
 }
 
-.redirect-link a:hover {
+.auth-redirect a:hover {
   text-decoration: underline;
+}
+
+.social-divider {
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+}
+
+.social-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+  z-index: 1;
+}
+
+.social-divider span {
+  background-color: #ffffff;
+  padding: 0 15px;
+  color: #757575;
+  font-size: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.google-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }

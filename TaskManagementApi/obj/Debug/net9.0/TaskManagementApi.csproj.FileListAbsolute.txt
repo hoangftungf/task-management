@@ -137,3 +137,9 @@ C:\task-management-ui\TaskManagementApi\obj\Debug\net9.0\refint\TaskManagementAp
 C:\task-management-ui\TaskManagementApi\obj\Debug\net9.0\TaskManagementApi.pdb
 C:\task-management-ui\TaskManagementApi\obj\Debug\net9.0\TaskManagementApi.genruntimeconfig.cache
 C:\task-management-ui\TaskManagementApi\obj\Debug\net9.0\ref\TaskManagementApi.dll
+C:\task-management-ui\TaskManagementApi\bin\Debug\net9.0\Google.Apis.dll
+C:\task-management-ui\TaskManagementApi\bin\Debug\net9.0\Google.Apis.Auth.dll
+C:\task-management-ui\TaskManagementApi\bin\Debug\net9.0\Google.Apis.Core.dll
+C:\task-management-ui\TaskManagementApi\bin\Debug\net9.0\Newtonsoft.Json.dll
+C:\task-management-ui\TaskManagementApi\bin\Debug\net9.0\System.Management.dll
+C:\task-management-ui\TaskManagementApi\bin\Debug\net9.0\runtimes\win\lib\net7.0\System.Management.dll
