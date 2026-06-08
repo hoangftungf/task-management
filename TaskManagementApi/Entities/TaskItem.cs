@@ -10,7 +10,7 @@ namespace TaskManagementApi.Entities
         public int Id { get; set; }
 
         [Required]
-        [StringLength(200)]
+        [StringLength(255)]
         public string Title { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;

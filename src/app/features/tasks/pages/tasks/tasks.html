@@ -8,21 +8,24 @@
     <input 
       type="text" 
       [(ngModel)]="newTaskTitle" 
-      placeholder="Nhập công việc mới..."
+      placeholder="Nhập tiêu đề công việc mới..."
       class="task-input"
     >
-    <button class="btn-add">Thêm</button>
+    <button class="btn-add" (click)="onAddTask()">Thêm</button>
   </div>
 
   <ul class="task-list">
-    <!-- Sử dụng vòng lặp @for của Angular 17 -->
     @for (task of taskList; track task.id) {
       <li class="task-item" [class.completed]="task.isCompleted">
         <label class="task-label">
-          <input type="checkbox" [checked]="task.isCompleted">
+          <input 
+            type="checkbox" 
+            [checked]="task.isCompleted" 
+            (change)="onToggleComplete(task)"
+          >
           <span class="task-title">{{ task.title }}</span>
         </label>
-        <button class="btn-delete">Xóa</button>
+        <button class="btn-delete" (click)="onDeleteTask(task.id)">Xóa</button>
       </li>
     } @empty {
       <p class="empty-msg">Chưa có công việc nào. Hãy thêm mới!</p>
