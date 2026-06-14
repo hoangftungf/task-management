@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TaskManagementApi.Data;
+using TaskManagementApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +42,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(); // Kích hoạt dịch vụ phân quyền
 
-// =================================================================
+// Đăng ký Email Service
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 var app = builder.Build();
 

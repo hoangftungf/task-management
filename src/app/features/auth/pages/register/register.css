@@ -99,3 +99,71 @@
 .auth-redirect a:hover {
   text-decoration: underline;
 }
+
+/* --- CSS CHO PHẦN OTP --- */
+.otp-subtitle {
+  text-align: center; 
+  color: gray;
+}
+
+/* Container chứa 6 ô vuông */
+.otp-inputs-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 25px 0;
+}
+
+/* Style cho từng ô vuông */
+.otp-box {
+  width: 45px;
+  height: 55px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  background-color: #fcfcfc;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hiệu ứng khi nhấp vào ô */
+.otp-box:focus {
+  border-color: #007bff; /* Màu viền xanh đồng bộ với nút submit */
+  background-color: #fff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+}
+
+.timer-text {
+  text-align: center;
+  color: #dc3545;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.resend-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.resend-btn:disabled {
+  color: #aaa;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.otp-submit-btn {
+  margin-top: 15px;
+}
+
+.back-link-wrapper {
+  margin-top: 15px; 
+  text-align: center;
+}

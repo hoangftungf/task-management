@@ -37,6 +37,10 @@ export class AuthService {
     return this.http.post(`${this.authApiUrl}/register`, dto, { responseType: 'text'});
   }
 
+  verifyOtp(data: { email: string, otpCode: string }): Observable<any> {
+    return this.http.post(`${this.authApiUrl}/verify-otp`, data);
+  }
+
   // Hàm bổ trợ lấy Token ra để dùng cho các bài sau (lấy danh sách Task)
   getToken(): string | null {
     return localStorage.getItem('token');

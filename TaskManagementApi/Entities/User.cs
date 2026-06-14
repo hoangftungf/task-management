@@ -12,6 +12,15 @@ namespace TaskManagementApi.Entities
 
         public string FullName { get; set; } = string.Empty;
 
+        //Trạng thái kích hoạt tài khoản (Mặc định là false khi mới đăng ký)
+        public bool IsEmailVerified { get; set; } = false;
+
+        //Mã OTP gồm 6 chữ số (Có thể để null nếu chưa gửi hoặc đã dùng xong)
+        public string? OtpCode { get; set; }
+
+        //Thời gian hết hạn của OTP
+        public DateTime? OtpExpiryTime { get; set; }
+
         // Theo dõi ngày tạo tài khoản của User
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
